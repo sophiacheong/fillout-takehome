@@ -5,20 +5,24 @@ import { ChangeEvent, useCallback, useState } from "react";
 
 export default function Details() {
   const [rsvp, setRSVP] = useState<string>("");
-  const [last, setLast] = useState<string>("");
+  const [guest, setGuest] = useState<number | null>(null);
 
   const handleRSVPChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setRSVP(e.currentTarget.value);
+    (_e: ChangeEvent<HTMLInputElement>, vars: "yes" | "no") => {
+      setRSVP(vars);
     },
     [setRSVP]
   );
 
-  const handleLastNameChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setLast(e.currentTarget.value);
+  const handleGuestChange = useCallback(
+    (num: number) => {
+      if (guest === num) {
+        setGuest(null);
+      } else {
+        setGuest(num);
+      }
     },
-    [setLast]
+    [guest, setGuest]
   );
 
   return (
@@ -26,7 +30,7 @@ export default function Details() {
       <Stack padding={2}>
         <form>
           <div className="space-y-12">
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-8">
               <div className="col-span-2 sm:col-span-1">
                 <fieldset className="col-span-2 sm:col-span-1">
                   <legend className="text-sm font-medium text-gray-900 dark:text-white">
@@ -40,7 +44,7 @@ export default function Details() {
                         value="yes"
                         className="h-5 w-5 accent-blue-600 cursor-pointer"
                         checked={rsvp === "yes"}
-                        onChange={() => setRsvp("yes")}
+                        onChange={(e) => handleRSVPChange(e, "yes")}
                       />
                       <span className="ml-2 text-base text-gray-900 dark:text-gray-100">
                         Yes
@@ -53,7 +57,7 @@ export default function Details() {
                         value="no"
                         className="h-5 w-5 accent-blue-600 cursor-pointer"
                         checked={rsvp === "no"}
-                        onChange={() => setRsvp("no")}
+                        onChange={(e) => handleRSVPChange(e, "no")}
                       />
                       <span className="ml-2 text-base text-gray-900 dark:text-gray-100">
                         No
@@ -71,15 +75,22 @@ export default function Details() {
                   How many guests?
                 </label>
                 <div className="mt-2">
-                  <input
-                    id="last-name"
-                    name="last-name"
-                    type="text"
-                    autoComplete="family-name"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                    value={last}
-                    onChange={handleLastNameChange}
-                  />
+                  {Array.from({ length: 10 }, (_, index) => (
+                    <label
+                      className="inline-flex items-center justify-center w-10 h-10 border rounded text-gray-900 cursor-pointer hover:bg-indigo-50"
+                      key={index}
+                    >
+                      <input
+                        type="checkbox"
+                        className="hidden peer"
+                        checked={guest === index + 1}
+                        onChange={() => handleGuestChange(index + 1)}
+                      />
+                      <span className="peer-checked:text-white peer-checked:bg-indigo-600 w-full h-full flex items-center justify-center rounded">
+                        {index + 1}
+                      </span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
