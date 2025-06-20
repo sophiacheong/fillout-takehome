@@ -1,11 +1,30 @@
 "use client";
 
 import { Box, Stack } from "@mui/material";
-import { ChangeEvent, useCallback, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+} from "react";
+import { DetailsContext } from "../context/Details";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import { Page } from "../context/Page";
+import { usePageTurner } from "../hooks/usePageTurner";
 
-export default function Details() {
-  const [rsvp, setRSVP] = useState<string>("");
-  const [guest, setGuest] = useState<number | null>(null);
+type DetailsProps = {
+  pages: Page[];
+  setActivePageId: Dispatch<SetStateAction<string>>;
+  activePageId: string;
+};
+
+export default function Details({
+  pages,
+  setActivePageId,
+  activePageId,
+}: DetailsProps) {
+  const { setRSVP, setGuest, guest, rsvp } = useContext(DetailsContext);
 
   const handleRSVPChange = useCallback(
     (_e: ChangeEvent<HTMLInputElement>, vars: "yes" | "no") => {
@@ -25,10 +44,12 @@ export default function Details() {
     [guest, setGuest]
   );
 
+  const { onSubmit } = usePageTurner({ pages, setActivePageId, activePageId });
+
   return (
     <Box display="flex" justifyContent="center">
       <Stack padding={2}>
-        <form>
+        <form onSubmit={onSubmit}>
           <div className="space-y-12">
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-8">
               <div className="col-span-2 sm:col-span-1">
@@ -42,7 +63,7 @@ export default function Details() {
                         type="radio"
                         name="rsvp"
                         value="yes"
-                        className="h-5 w-5 accent-blue-600 cursor-pointer"
+                        className="h-5 w-5 accent-red-800 cursor-pointer"
                         checked={rsvp === "yes"}
                         onChange={(e) => handleRSVPChange(e, "yes")}
                       />
@@ -55,7 +76,7 @@ export default function Details() {
                         type="radio"
                         name="rsvp"
                         value="no"
-                        className="h-5 w-5 accent-blue-600 cursor-pointer"
+                        className="h-5 w-5 accent-red-800 cursor-pointer"
                         checked={rsvp === "no"}
                         onChange={(e) => handleRSVPChange(e, "no")}
                       />
@@ -77,7 +98,7 @@ export default function Details() {
                 <div className="mt-2">
                   {Array.from({ length: 10 }, (_, index) => (
                     <label
-                      className="inline-flex items-center justify-center w-10 h-10 border rounded text-gray-900 cursor-pointer hover:bg-indigo-50"
+                      className="inline-flex items-center justify-center w-10 h-10 border rounded text-gray-900 cursor-pointer hover:bg-yellow-50"
                       key={index}
                     >
                       <input
@@ -86,12 +107,21 @@ export default function Details() {
                         checked={guest === index + 1}
                         onChange={() => handleGuestChange(index + 1)}
                       />
-                      <span className="peer-checked:text-white peer-checked:bg-indigo-600 w-full h-full flex items-center justify-center rounded">
+                      <span className="peer-checked:text-white peer-checked:bg-yellow-600 w-full h-full flex items-center justify-center rounded">
                         {index + 1}
                       </span>
                     </label>
                   ))}
                 </div>
+              </div>
+
+              <div className="col-span-2 sm:col-span-1">
+                <button
+                  className="bg-transparent hover:bg-amber-200 text-base font-semibold hover:text-white py-2 px-2 border border-yellow-500 hover:border-transparent rounded"
+                  type="submit"
+                >
+                  Next <ArrowRightAltIcon />
+                </button>
               </div>
             </div>
           </div>
