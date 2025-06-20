@@ -14,7 +14,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import GradingIcon from "@mui/icons-material/Grading";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 
-const defaultPage = [
+export const initialPages = [
   {
     id: "initial-page-1",
     title: PageTitle.Info,
@@ -41,8 +41,8 @@ export default function Home() {
   const [last, setLast] = useState<string>("");
   const [rsvp, setRSVP] = useState<string>("");
   const [guest, setGuest] = useState<number | null>(null);
-  const [pages, setPages] = useState<Page[]>(defaultPage);
-  const [activePageId, setActivePageId] = useState<string>(defaultPage[0].id);
+  const [pages, setPages] = useState<Page[]>(initialPages);
+  const [activePageId, setActivePageId] = useState<string>(initialPages[0].id);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
