@@ -12,22 +12,23 @@ import PageNavigation from "./components/PageNavigation";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
 import DescriptionIcon from "@mui/icons-material/Description";
 import GradingIcon from "@mui/icons-material/Grading";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 
 const defaultPage = [
   {
-    id: uuidv4(),
+    id: "initial-page-1",
     title: PageTitle.Info,
     component: Info,
     icon: <InfoOutlineIcon />,
   },
   {
-    id: uuidv4(),
+    id: "initial-page-2",
     title: PageTitle.Details,
     component: Details,
     icon: <DescriptionIcon />,
   },
   {
-    id: uuidv4(),
+    id: "initial-page-3",
     title: PageTitle.Review,
     component: Review,
     icon: <GradingIcon />,
@@ -42,6 +43,16 @@ export default function Home() {
   const [guest, setGuest] = useState<number | null>(null);
   const [pages, setPages] = useState<Page[]>(defaultPage);
   const [activePageId, setActivePageId] = useState<string>(defaultPage[0].id);
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const reorderedPages = Array.from(pages);
+    const [movedPage] = reorderedPages.splice(result.source.index, 1);
+    reorderedPages.splice(result.destination.index, 0, movedPage);
+
+    setPages(reorderedPages);
+  };
 
   const addPage = (
     index: number,
@@ -74,24 +85,26 @@ export default function Home() {
     <InfoContext.Provider
       value={{ first, setFirst, email, setEmail, last, setLast }}
     >
-      <DetailsContext.Provider value={{ rsvp, setRSVP, guest, setGuest }}>
-        <PageContext.Provider
-          value={{ pages, setPages, activePageId, setActivePageId, addPage }}
-        >
-          <Stack>
-            {currentPageRequiresProps ? (
-              <CurrentPage
-                pages={pages}
-                setActivePageId={setActivePageId}
-                activePageId={activePageId}
-              />
-            ) : (
-              <CurrentPage />
-            )}
-            <PageNavigation />
-          </Stack>
-        </PageContext.Provider>
-      </DetailsContext.Provider>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <DetailsContext.Provider value={{ rsvp, setRSVP, guest, setGuest }}>
+          <PageContext.Provider
+            value={{ pages, setPages, activePageId, setActivePageId, addPage }}
+          >
+            <Stack>
+              {currentPageRequiresProps ? (
+                <CurrentPage
+                  pages={pages}
+                  setActivePageId={setActivePageId}
+                  activePageId={activePageId}
+                />
+              ) : (
+                <CurrentPage />
+              )}
+              <PageNavigation />
+            </Stack>
+          </PageContext.Provider>
+        </DetailsContext.Provider>
+      </DragDropContext>
     </InfoContext.Provider>
   );
 }

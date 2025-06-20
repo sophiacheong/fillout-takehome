@@ -118,7 +118,7 @@ export default function Info({
 
               <div className="col-span-2">
                 <button
-                  className="bg-transparent hover:bg-amber-200 text-base font-semibold hover:text-white py-2 px-2 border border-yellow-500 hover:border-transparent rounded"
+                  className="bg-transparent hover:bg-amber-200 text-base font-semibold hover:text-white pr-2 pl-2 py-1 border border-yellow-500 hover:border-transparent rounded"
                   type="submit"
                 >
                   Next <ArrowRightAltIcon />
