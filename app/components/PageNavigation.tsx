@@ -6,6 +6,7 @@ import {
   MenuItem,
   MenuList,
   Paper,
+  Popover,
   Stack,
   Typography,
 } from "@mui/material";
@@ -24,15 +25,17 @@ import AddPage from "./AddPage";
 import React from "react";
 
 export default function PageNavigation() {
-  const { pages, setPages, activePageId, setActivePageId, addPage } =
-    useContext(PageContext);
+  const { pages, activePageId, setActivePageId } = useContext(PageContext);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activePageTab, setActivePageTab] = useState<string | null>(null);
   const [selectedAddPage, setSelectedAddPage] = useState<boolean>(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [contextAnchorEl, setContextAnchorEl] = useState<
+    HTMLDivElement | HTMLButtonElement | null
+  >(null);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const titleRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const toggleMenu = (e: React.MouseEvent) => {
@@ -53,6 +56,8 @@ export default function PageNavigation() {
     [setSelectedAddPage, setCurrentIndex]
   );
 
+  const onClosePopover = useCallback(() => setAnchorEl(null), [setAnchorEl]);
+
   return (
     <Droppable droppableId="pages" direction="horizontal">
       {(provided) => (
@@ -65,7 +70,14 @@ export default function PageNavigation() {
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {pages.map((page, index) => (
-            <Stack key={page.id} direction="row" spacing={0.5}>
+            <Stack
+              key={page.id}
+              direction="row"
+              spacing={0.5}
+              ref={(el) => {
+                titleRefs.current[index] = el;
+              }}
+            >
               <Draggable key={page.id} draggableId={page.id} index={index}>
                 {(provided, snapshot) => (
                   <div
@@ -82,8 +94,8 @@ export default function PageNavigation() {
                       tabIndex={0}
                       onClick={() => setActivePageId(page.id)}
                       onMouseDown={() => setActivePageTab(page.id)}
-                      onMouseUp={() => setActivePageTab(null)}
-                      onMouseLeave={() => setActivePageTab(null)}
+                      onBlur={() => setActivePageTab(null)}
+                      onFocus={() => setActivePageTab(page.id)}
                       className={`rounded-[8px] border-[0.5px] border-gray-300 pt-1 pr-[10px] pb-1 pl-[10px]
                       focus:border-[#2F72E2] focus:bg-white focus:shadow-[0px_1px_3px_0px_#0000000A,0px_1px_1px_0px_#00000005,0px_0px_0px_1.5px_#2F72E240] outline-none
                       bg-[rgba(157,164,178,0.15)] hover:bg-[rgba(157,164,178,0.35)] ${
@@ -120,6 +132,9 @@ export default function PageNavigation() {
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleMenu(e);
+                              setCurrentIndex(index);
+                              setContextAnchorEl(titleRefs.current[index]);
+                              // setContextAnchorEl(e?.currentTarget);
                             }}
                             className="rounded"
                             aria-label="More options"
@@ -133,81 +148,96 @@ export default function PageNavigation() {
                       </Stack>
                     </div>
 
-                    {/* {isMenuOpen && (
-                    <Paper
-                      sx={{
-                        m: 1.5,
-                        border: "0.5px solid #E1E1E1",
-                        borderRadius: "12px",
-                      }}
-                    >
-                      <Typography
-                        variant="h6"
+                    {isMenuOpen && currentIndex === index && (
+                      <Popover
+                        open={Boolean(contextAnchorEl)}
+                        anchorEl={contextAnchorEl}
+                        onClose={onClosePopover}
                         sx={{
-                          px: 2.5,
-                          py: 0.5,
-                          fontWeight: 700,
-                          borderRadius: "12px",
-                          backgroundColor: "#FAFBFC",
+                          p: 1.5,
+                          border: "0.5px solid #E1E1E1",
+                        }}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        PaperProps={{
+                          sx: {
+                            borderRadius: "12px",
+                          },
                         }}
                       >
-                        Settings
-                      </Typography>
-                      <Divider />
-
-                      <Stack px={1}>
-                        <MenuList style={{ paddingBottom: 0 }}>
-                          <MenuItem>
-                            <ListItemIcon>
-                              <Flag
-                                fontSize="small"
-                                style={{ fill: "#2F72E2" }}
-                              />
-                            </ListItemIcon>
-                            <ListItemText>Set as first page</ListItemText>
-                          </MenuItem>
-                        </MenuList>
-                        <MenuList style={{ paddingBottom: 0, paddingTop: 0 }}>
-                          <MenuItem>
-                            <ListItemIcon>
-                              <BorderColor fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>Rename</ListItemText>
-                          </MenuItem>
-                        </MenuList>
-                        <MenuList style={{ paddingBottom: 0, paddingTop: 0 }}>
-                          <MenuItem>
-                            <ListItemIcon>
-                              <ContentPaste fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>Copy</ListItemText>
-                          </MenuItem>
-                        </MenuList>
-                        <MenuList style={{ paddingTop: 0 }}>
-                          <MenuItem>
-                            <ListItemIcon>
-                              <ContentCopy fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>Duplicate</ListItemText>
-                          </MenuItem>
-                        </MenuList>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            px: 2.5,
+                            py: 0.5,
+                            fontWeight: 700,
+                            borderRadius: "12px",
+                            backgroundColor: "#FAFBFC",
+                          }}
+                        >
+                          Settings
+                        </Typography>
                         <Divider />
-                        <MenuList>
-                          <MenuItem>
-                            <ListItemIcon>
-                              <Delete
-                                fontSize="small"
-                                style={{ fill: "red" }}
-                              />
-                            </ListItemIcon>
-                            <ListItemText>
-                              <Typography color="red">Delete</Typography>
-                            </ListItemText>
-                          </MenuItem>
-                        </MenuList>
-                      </Stack>
-                    </Paper>
-                  )} */}
+
+                        <Stack px={1}>
+                          <MenuList style={{ paddingBottom: 0 }}>
+                            <MenuItem>
+                              <ListItemIcon>
+                                <Flag
+                                  fontSize="small"
+                                  style={{ fill: "#2F72E2" }}
+                                />
+                              </ListItemIcon>
+                              <ListItemText>Set as first page</ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                          <MenuList style={{ paddingBottom: 0, paddingTop: 0 }}>
+                            <MenuItem>
+                              <ListItemIcon>
+                                <BorderColor fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText>Rename</ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                          <MenuList style={{ paddingBottom: 0, paddingTop: 0 }}>
+                            <MenuItem>
+                              <ListItemIcon>
+                                <ContentPaste fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText>Copy</ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                          <MenuList style={{ paddingTop: 0 }}>
+                            <MenuItem>
+                              <ListItemIcon>
+                                <ContentCopy fontSize="small" />
+                              </ListItemIcon>
+                              <ListItemText>Duplicate</ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                          <Divider />
+                          <MenuList>
+                            <MenuItem>
+                              <ListItemIcon>
+                                <Delete
+                                  fontSize="small"
+                                  style={{ fill: "red" }}
+                                />
+                              </ListItemIcon>
+                              <ListItemText>
+                                <Typography color="red">Delete</Typography>
+                              </ListItemText>
+                            </MenuItem>
+                          </MenuList>
+                        </Stack>
+                      </Popover>
+                    )}
                   </div>
                 )}
               </Draggable>
