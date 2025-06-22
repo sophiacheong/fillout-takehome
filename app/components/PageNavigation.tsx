@@ -21,6 +21,7 @@ import {
   Add,
 } from "@mui/icons-material";
 import AddPage from "./AddPage";
+import React from "react";
 
 export default function PageNavigation() {
   const { pages, setPages, activePageId, setActivePageId, addPage } =
@@ -29,28 +30,42 @@ export default function PageNavigation() {
   const [activePageTab, setActivePageTab] = useState<string | null>(null);
   const [selectedAddPage, setSelectedAddPage] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const toggleMenu = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMenuOpen((prev) => !prev);
   };
 
-  const handleAddButtonChange = useCallback(() => {
-    setSelectedAddPage((prev) => !prev);
-  }, [setSelectedAddPage]);
+  const handleAddButtonChange = useCallback(
+    (index?: number) => {
+      if (typeof index === "number" && index >= 0) {
+        setCurrentIndex(index);
+      } else {
+        setCurrentIndex(null);
+      }
+
+      setSelectedAddPage((prev) => !prev);
+    },
+    [setSelectedAddPage, setCurrentIndex]
+  );
 
   return (
     <Droppable droppableId="pages" direction="horizontal">
       {(provided) => (
         <Stack
-          className="w-full justify-center"
+          className="w-full justify-center overflow-x-auto whitespace-nowrap"
           direction="row"
           spacing={1}
           ref={provided.innerRef}
           {...provided.droppableProps}
+          style={{ WebkitOverflowScrolling: "touch" }}
         >
           {pages.map((page, index) => (
-            <>
+            <Stack key={page.id} direction="row" spacing={0.5}>
               <Draggable key={page.id} draggableId={page.id} index={index}>
                 {(provided, snapshot) => (
                   <div
@@ -69,12 +84,11 @@ export default function PageNavigation() {
                       onMouseDown={() => setActivePageTab(page.id)}
                       onMouseUp={() => setActivePageTab(null)}
                       onMouseLeave={() => setActivePageTab(null)}
-                      className={`rounded-[8px] border-[0.5px] border-gray-300
-              pt-1 pr-[10px] pb-1 pl-[10px]
-              focus:border-[#2F72E2] focus:bg-white focus:shadow-[0px_1px_3px_0px_#0000000A,0px_1px_1px_0px_#00000005,0px_0px_0px_1.5px_#2F72E240]
-              outline-none
-              bg-[rgba(157,164,178,0.15)] hover:bg-[rgba(157,164,178,0.35)]
-              ${activePageId === page.id ? "bg-white" : ""}`}
+                      className={`rounded-[8px] border-[0.5px] border-gray-300 pt-1 pr-[10px] pb-1 pl-[10px]
+                      focus:border-[#2F72E2] focus:bg-white focus:shadow-[0px_1px_3px_0px_#0000000A,0px_1px_1px_0px_#00000005,0px_0px_0px_1.5px_#2F72E240] outline-none
+                      bg-[rgba(157,164,178,0.15)] hover:bg-[rgba(157,164,178,0.35)] ${
+                        activePageId === page.id ? "bg-white" : ""
+                      }`}
                       {...provided.dragHandleProps}
                     >
                       <Stack
@@ -93,12 +107,9 @@ export default function PageNavigation() {
                             {page.icon}
                           </div>
                           <div
-                            className={`text-[#677289]
-                    group-hover:text-[#677289]
-                    group-focus-visible:text-black
-                    group-active:text-black ${
-                      activePageId === page.id ? "text-black" : ""
-                    }`}
+                            className={`text-[#677289] group-hover:text-[#677289]group-focus-visible:text-black group-active:text-black ${
+                              activePageId === page.id ? "text-black" : ""
+                            }`}
                           >
                             {page.title}
                           </div>
@@ -201,23 +212,42 @@ export default function PageNavigation() {
                 )}
               </Draggable>
               {index < pages.length - 1 && (
-                <div className="flex items-center relative group w-[40px] h-[40px] justify-center">
-                  <button
-                    // onClick={() => handleAddPageAt(index + 1)}
-                    className="absolute opacity-0 group-hover:opacity-100 transition-opacity
+                <div className="flex items-center justify-center relative w-[40px] h-[40px] group">
+                  <AddPage
+                    onChange={handleAddButtonChange}
+                    buttonClassName={`absolute opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
                     w-[16px] h-[16px] border-[0.5px] border-[#E1E1E1] rounded-[8px]
-                    pt-1 pr-[10px] pb-1 pl-[10px] bg-white hover:bg-gray-100 flex items-center justify-center"
+                    pt-1 pr-[10px] pb-1 pl-[10px] bg-white hover:bg-gray-100 flex items-center justify-center ${
+                      anchorEl && index === currentIndex
+                        ? "opacity-100"
+                        : "opacity-0 group-hover:opacity-100"
+                    }`}
+                    anchorEl={anchorEl}
+                    setAnchorEl={setAnchorEl}
+                    index={index}
+                    currentIndex={currentIndex}
                   >
                     <Add fontSize="small" />
-                  </button>
+                  </AddPage>
                 </div>
               )}
-            </>
+            </Stack>
           ))}
           <AddPage
-            selected={selectedAddPage}
             onChange={handleAddButtonChange}
-          />
+            anchorEl={anchorEl}
+            setAnchorEl={setAnchorEl}
+            currentIndex={currentIndex}
+          >
+            <Stack direction="row" spacing={1}>
+              <Add
+                className={`text-[#677289] focus-visible:text-yellow-500 ${
+                  selectedAddPage ? "text-yellow-500" : ""
+                }`}
+              />
+              Add Page
+            </Stack>
+          </AddPage>
         </Stack>
       )}
     </Droppable>
