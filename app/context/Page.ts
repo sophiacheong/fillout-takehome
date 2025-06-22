@@ -5,8 +5,14 @@ import { createContext, JSX, useContext } from "react";
 export enum PageTitle {
   Info = "Info",
   Details = "Details",
-  Review = "Review",
+  Contact = "Contact",
 }
+
+export const TitleToIcon = {
+  [PageTitle.Info]: "InfoOutlineIcon",
+  [PageTitle.Details]: "DescriptionIcon",
+  [PageTitle.Contact]: "GradingIcon",
+} as const;
 
 export interface Page {
   id: string;

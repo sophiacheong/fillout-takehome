@@ -6,9 +6,8 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
-  useContext,
+  useState,
 } from "react";
-import { DetailsContext } from "../context/Details";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { Page } from "../context/Page";
 import { usePageTurner } from "../hooks/usePageTurner";
@@ -24,7 +23,8 @@ export default function Details({
   setActivePageId,
   activePageId,
 }: DetailsProps) {
-  const { setRSVP, setGuest, guest, rsvp } = useContext(DetailsContext);
+  const [rsvp, setRSVP] = useState<string>("");
+  const [guest, setGuest] = useState<number | null>(null);
 
   const handleRSVPChange = useCallback(
     (_e: ChangeEvent<HTMLInputElement>, vars: "yes" | "no") => {
