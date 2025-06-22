@@ -5,7 +5,6 @@ import {
   ListItemText,
   MenuItem,
   MenuList,
-  Paper,
   Popover,
   Stack,
   Typography,
@@ -56,7 +55,11 @@ export default function PageNavigation() {
     [setSelectedAddPage, setCurrentIndex]
   );
 
-  const onClosePopover = useCallback(() => setAnchorEl(null), [setAnchorEl]);
+  const onClosePopover = useCallback(() => {
+    setContextAnchorEl(null);
+    setCurrentIndex(null);
+    setActivePageTab(null);
+  }, [setContextAnchorEl, setCurrentIndex, setActivePageTab]);
 
   return (
     <Droppable droppableId="pages" direction="horizontal">
@@ -134,7 +137,6 @@ export default function PageNavigation() {
                               toggleMenu(e);
                               setCurrentIndex(index);
                               setContextAnchorEl(titleRefs.current[index]);
-                              // setContextAnchorEl(e?.currentTarget);
                             }}
                             className="rounded"
                             aria-label="More options"
@@ -165,9 +167,11 @@ export default function PageNavigation() {
                           vertical: "bottom",
                           horizontal: "left",
                         }}
-                        PaperProps={{
-                          sx: {
-                            borderRadius: "12px",
+                        slotProps={{
+                          paper: {
+                            sx: {
+                              borderRadius: "12px",
+                            },
                           },
                         }}
                       >
