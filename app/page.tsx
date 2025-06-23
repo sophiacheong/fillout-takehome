@@ -73,6 +73,7 @@ export default function Home() {
   const CurrentPage = useMemo(() => {
     return pages.find((page) => page.id === activePageId)!.component;
   }, [activePageId, pages]);
+
   const currentPageRequiresProps = useMemo(() => {
     const current = pages.find((page) => page.id === activePageId);
 
@@ -86,18 +87,25 @@ export default function Home() {
       <PageContext.Provider
         value={{ pages, setPages, activePageId, setActivePageId, addPage }}
       >
-        <Stack>
-          {currentPageRequiresProps ? (
-            <CurrentPage
-              pages={pages}
-              setActivePageId={setActivePageId}
-              activePageId={activePageId}
-            />
-          ) : (
-            <CurrentPage />
-          )}
-          <PageNavigation />
-        </Stack>
+        <div className="min-h-screen flex flex-col">
+          <main className="flex-grow">
+            <Stack>
+              {currentPageRequiresProps ? (
+                <CurrentPage
+                  pages={pages}
+                  setActivePageId={setActivePageId}
+                  activePageId={activePageId}
+                />
+              ) : (
+                <CurrentPage />
+              )}
+            </Stack>
+          </main>
+
+          <footer className="text-center">
+            <PageNavigation />
+          </footer>
+        </div>
       </PageContext.Provider>
     </DragDropContext>
   );

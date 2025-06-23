@@ -87,6 +87,10 @@ export default function AddPage({
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
           vertical: "bottom",
           horizontal: "left",
         }}
