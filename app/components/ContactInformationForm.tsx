@@ -48,9 +48,9 @@ export default function ContactInformationForm() {
                     type="tel"
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-yellow-600 sm:text-sm"
-                    maxLength={12}
+                    maxLength={10}
                     value={number}
-                    onChange={(e) => setNumber(`+1${e.currentTarget.value}`)}
+                    onChange={(e) => setNumber(e.currentTarget.value)}
                   />
                 </div>
               </div>
