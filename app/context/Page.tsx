@@ -1,6 +1,12 @@
 "use client";
 
 import { createContext, JSX, useContext } from "react";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import DescriptionIcon from "@mui/icons-material/Description";
+import GradingIcon from "@mui/icons-material/Grading";
+import Info from "../components/Info";
+import Details from "../components/Details";
+import ContactInformationForm from "../components/ContactInformationForm";
 
 export enum PageTitle {
   Info = "Info",
@@ -18,12 +24,12 @@ export type ContactInfo = {
   email?: string;
   number?: string;
   preferredContact?: "mobile" | "email" | null;
-}
+};
 
 export type DetailInfo = {
   rsvp?: string;
   guest?: number | null;
-}
+};
 
 export type Info = {
   first?: string;
@@ -33,7 +39,7 @@ export type Info = {
   city?: string;
   state?: string;
   postal?: string;
-}
+};
 
 export interface Page {
   id: string;
@@ -45,6 +51,27 @@ export interface Page {
   detailInfo?: DetailInfo;
   info?: Info;
 }
+
+export const initialPages = [
+  {
+    id: "initial-page-1",
+    title: PageTitle.Info,
+    component: Info,
+    icon: <InfoOutlineIcon />,
+  },
+  {
+    id: "initial-page-2",
+    title: PageTitle.Details,
+    component: Details,
+    icon: <DescriptionIcon />,
+  },
+  {
+    id: "initial-page-3",
+    title: PageTitle.Contact,
+    component: ContactInformationForm,
+    icon: <GradingIcon />,
+  },
+];
 
 interface PageContextType {
   pages: Page[];
