@@ -1,7 +1,6 @@
 import { Button, Popover, Stack } from "@mui/material";
 import React, { PropsWithChildren, useCallback, useContext } from "react";
-import { initialPages } from "../page";
-import { Page, PageContext } from "../context/Page";
+import { initialPages, Page, PageContext } from "../context/Page";
 import { v4 as uuidv4 } from "uuid";
 
 type AddPageProps = {
