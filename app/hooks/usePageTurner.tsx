@@ -1,24 +1,39 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
-import { Page } from "../context/Page";
+import { useCallback, useContext, useMemo } from "react";
+import { Page, PageContext } from "../context/Page";
 
-type PageTurnerArgs = {
-  pages: Page[];
-  setActivePageId: Dispatch<SetStateAction<string>>;
-  activePageId: string;
-};
+export const usePageTurner = () => {
+  const { pages, setPages, setActivePageId, activePageId } =
+    useContext(PageContext);
 
-export const usePageTurner = ({
-  pages,
-  setActivePageId,
-  activePageId,
-}: PageTurnerArgs) => {
-  const onSubmit = useCallback(() => {
-    const current = pages.findIndex((page) => page.id === activePageId);
-    const next = pages[current + 1];
-    setActivePageId(next.id);
-  }, [activePageId, pages, setActivePageId]);
+  const currentPage = useMemo(
+    () => pages.find((page) => page.id === activePageId),
+    [pages, activePageId]
+  );
+  const currentPageIndex = useMemo(
+    () => pages.findIndex((page) => page.id === activePageId),
+    [pages, activePageId]
+  );
+
+  const onSubmit = useCallback(
+    (pageInfo?: Partial<Page>) => {
+      const next = pages[currentPageIndex + 1];
+      const newPages = [...pages];
+      newPages[currentPageIndex] = {
+        ...newPages[currentPageIndex],
+        ...pageInfo,
+      };
+      setPages(newPages);
+      setActivePageId(next.id);
+    },
+    [currentPageIndex, pages, setActivePageId, setPages]
+  );
+
+  const showSubmitButton = currentPageIndex < pages.length - 1;
 
   return {
     onSubmit,
+    showSubmitButton,
+    currentPage,
+    currentPageIndex,
   };
 };

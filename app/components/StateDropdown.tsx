@@ -1,11 +1,11 @@
-import { ChangeEvent, Dispatch, SetStateAction, useCallback } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { UsaStates } from "usa-states";
 
 const usStates = new UsaStates();
 const states = usStates.states;
 
 type StateDropdownProps = {
-  setState: Dispatch<SetStateAction<string>>;
+  setState: (vars: string) => void;
   state: string;
 };
 

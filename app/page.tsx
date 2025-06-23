@@ -74,14 +74,6 @@ export default function Home() {
     return pages.find((page) => page.id === activePageId)!.component;
   }, [activePageId, pages]);
 
-  const currentPageRequiresProps = useMemo(() => {
-    const current = pages.find((page) => page.id === activePageId);
-
-    return (
-      current?.title === PageTitle.Info || current?.title === PageTitle.Details
-    );
-  }, [activePageId, pages]);
-
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <PageContext.Provider
@@ -90,15 +82,7 @@ export default function Home() {
         <div className="min-h-screen flex flex-col">
           <main className="flex-grow">
             <Stack>
-              {currentPageRequiresProps ? (
-                <CurrentPage
-                  pages={pages}
-                  setActivePageId={setActivePageId}
-                  activePageId={activePageId}
-                />
-              ) : (
-                <CurrentPage />
-              )}
+              <CurrentPage />
             </Stack>
           </main>
 

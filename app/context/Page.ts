@@ -14,12 +14,36 @@ export const TitleToIcon = {
   [PageTitle.Contact]: "GradingIcon",
 } as const;
 
+export type ContactInfo = {
+  email: string;
+  number: string;
+  preferredContact: "mobile" | "email" | null;
+}
+
+export type DetailInfo = {
+  rsvp: string;
+  guest: number | null;
+}
+
+export type Info = {
+  first: string;
+  last: string;
+  streetAddress: string;
+  streetAddress2?: string;
+  city: string;
+  state: string;
+  postal: string;
+}
+
 export interface Page {
   id: string;
   title: PageTitle;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: (props: any) => JSX.Element;
   icon: React.ReactNode;
+  contactInfo?: ContactInfo;
+  detailInfo?: DetailInfo;
+  info?: Info;
 }
 
 interface PageContextType {

@@ -3,53 +3,90 @@
 import { Box, Stack } from "@mui/material";
 import {
   ChangeEvent,
-  Dispatch,
-  SetStateAction,
+  FormEvent,
+  FormEventHandler,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
   useState,
 } from "react";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import { Page } from "../context/Page";
 import { usePageTurner } from "../hooks/usePageTurner";
+import { PageContext } from "../context/Page";
 
-type DetailsProps = {
-  pages: Page[];
-  setActivePageId: Dispatch<SetStateAction<string>>;
-  activePageId: string;
-};
+export default function Details() {
+  const { pages, setPages } = useContext(PageContext);
+  const { onSubmit, showSubmitButton, currentPage, currentPageIndex } =
+    usePageTurner();
 
-export default function Details({
-  pages,
-  setActivePageId,
-  activePageId,
-}: DetailsProps) {
-  const [rsvp, setRSVP] = useState<string>("");
-  const [guest, setGuest] = useState<number | null>(null);
+  const rsvp = useMemo(
+    () => currentPage?.detailInfo?.rsvp ?? "",
+    [currentPage?.detailInfo?.rsvp]
+  );
+  const guest = useMemo(
+    () => currentPage?.detailInfo?.guest ?? null,
+    [currentPage?.detailInfo?.guest]
+  );
+
+  // const [rsvp, setRSVP] = useState<string>("");
+  // const [guest, setGuest] = useState<number | null>(null);
+
+  // useEffect(() => {
+  //   if (currentPage?.detailInfo) {
+  //     setRSVP(currentPage.detailInfo.rsvp);
+  //     setGuest(currentPage.detailInfo.guest);
+  //   } else {
+  //     setRSVP("");
+  //     setGuest(null);
+  //   }
+  // }, [currentPage?.detailInfo]);
 
   const handleRSVPChange = useCallback(
     (_e: ChangeEvent<HTMLInputElement>, vars: "yes" | "no") => {
-      setRSVP(vars);
+      const newPages = [...pages];
+      newPages[currentPageIndex] = {
+        ...newPages[currentPageIndex],
+        detailInfo: { ...newPages[currentPageIndex].detailInfo, rsvp: vars },
+      };
+      console.log(newPages[currentPageIndex]);
+      setPages(newPages);
     },
-    [setRSVP]
+    [currentPageIndex, pages, setPages]
   );
 
   const handleGuestChange = useCallback(
     (num: number) => {
+      const newPages = [...pages];
       if (guest === num) {
-        setGuest(null);
+        newPages[currentPageIndex] = {
+          ...newPages[currentPageIndex],
+          detailInfo: { ...newPages[currentPageIndex].detailInfo, guest: null },
+        };
       } else {
-        setGuest(num);
+        newPages[currentPageIndex] = {
+          ...newPages[currentPageIndex],
+          detailInfo: { ...newPages[currentPageIndex].detailInfo, guest: num },
+        };
       }
+
+      setPages(newPages);
     },
-    [guest, setGuest]
+    [currentPageIndex, guest, pages, setPages]
   );
 
-  const { onSubmit } = usePageTurner({ pages, setActivePageId, activePageId });
+  const formOnSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      onSubmit();
+    },
+    [onSubmit]
+  );
 
   return (
     <Box display="flex" justifyContent="center">
       <Stack padding={2}>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={formOnSubmit}>
           <div className="space-y-12">
             <div className="mt-10 grid grid-cols-1 sm:grid-cols-1 gap-x-6 gap-y-8">
               <div className="col-span-2 sm:col-span-1">
@@ -115,14 +152,16 @@ export default function Details({
                 </div>
               </div>
 
-              <div className="col-span-2 sm:col-span-1">
-                <button
-                  className="bg-transparent hover:bg-amber-200 text-base font-semibold hover:text-white py-1 px-1 border border-yellow-500 hover:border-transparent rounded"
-                  type="submit"
-                >
-                  Next <ArrowRightAltIcon />
-                </button>
-              </div>
+              {showSubmitButton && (
+                <div className="col-span-2 sm:col-span-1">
+                  <button
+                    className="bg-transparent hover:bg-amber-200 text-base font-semibold hover:text-white py-1 px-1 border border-yellow-500 hover:border-transparent rounded"
+                    type="submit"
+                  >
+                    Next <ArrowRightAltIcon />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </form>
