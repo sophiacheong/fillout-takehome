@@ -4,12 +4,9 @@ import { Box, Stack } from "@mui/material";
 import {
   ChangeEvent,
   FormEvent,
-  FormEventHandler,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
 } from "react";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import { usePageTurner } from "../hooks/usePageTurner";
@@ -29,19 +26,6 @@ export default function Details() {
     [currentPage?.detailInfo?.guest]
   );
 
-  // const [rsvp, setRSVP] = useState<string>("");
-  // const [guest, setGuest] = useState<number | null>(null);
-
-  // useEffect(() => {
-  //   if (currentPage?.detailInfo) {
-  //     setRSVP(currentPage.detailInfo.rsvp);
-  //     setGuest(currentPage.detailInfo.guest);
-  //   } else {
-  //     setRSVP("");
-  //     setGuest(null);
-  //   }
-  // }, [currentPage?.detailInfo]);
-
   const handleRSVPChange = useCallback(
     (_e: ChangeEvent<HTMLInputElement>, vars: "yes" | "no") => {
       const newPages = [...pages];
@@ -49,7 +33,6 @@ export default function Details() {
         ...newPages[currentPageIndex],
         detailInfo: { ...newPages[currentPageIndex].detailInfo, rsvp: vars },
       };
-      console.log(newPages[currentPageIndex]);
       setPages(newPages);
     },
     [currentPageIndex, pages, setPages]

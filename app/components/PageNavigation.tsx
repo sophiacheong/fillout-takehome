@@ -282,6 +282,7 @@ export default function PageNavigation() {
               Add Page
             </Stack>
           </AddPage>
+          {provided.placeholder}
         </Stack>
       )}
     </Droppable>

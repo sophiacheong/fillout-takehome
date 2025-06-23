@@ -15,24 +15,24 @@ export const TitleToIcon = {
 } as const;
 
 export type ContactInfo = {
-  email: string;
-  number: string;
-  preferredContact: "mobile" | "email" | null;
+  email?: string;
+  number?: string;
+  preferredContact?: "mobile" | "email" | null;
 }
 
 export type DetailInfo = {
-  rsvp: string;
-  guest: number | null;
+  rsvp?: string;
+  guest?: number | null;
 }
 
 export type Info = {
-  first: string;
-  last: string;
-  streetAddress: string;
+  first?: string;
+  last?: string;
+  streetAddress?: string;
   streetAddress2?: string;
-  city: string;
-  state: string;
-  postal: string;
+  city?: string;
+  state?: string;
+  postal?: string;
 }
 
 export interface Page {

@@ -47,34 +47,6 @@ export default function Info() {
     [currentPage?.info?.postal]
   );
 
-  // const [first, setFirst] = useState<string>("");
-  // const [streetAddress, setStreetAddress] = useState<string>("");
-  // const [streetAddress2, setStreetAddress2] = useState<string>("");
-  // const [city, setCity] = useState<string>("");
-  // const [state, setState] = useState<string>("");
-  // const [postal, setPostal] = useState<string>("");
-  // const [last, setLast] = useState<string>("");
-
-  // useEffect(() => {
-  //   if (currentPage?.info) {
-  //     setFirst(currentPage.info.first ?? "");
-  //     setLast(currentPage.info.last ?? "");
-  //     setStreetAddress(currentPage.info.streetAddress ?? "");
-  //     setStreetAddress2(currentPage.info.streetAddress2 ?? "");
-  //     setCity(currentPage.info.city ?? "");
-  //     setState(currentPage.info.state ?? "");
-  //     setPostal(currentPage.info.postal ?? "");
-  //   } else {
-  //     setFirst("");
-  //     setLast("");
-  //     setStreetAddress("");
-  //     setStreetAddress2("");
-  //     setCity("");
-  //     setState("");
-  //     setPostal("");
-  //   }
-  // }, [currentPage]);
-
   const handleFirstChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const newPages = [...pages];
